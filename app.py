@@ -37,6 +37,7 @@ synonyms = {
     "data analytics": "data analysis"
 }
 
+
 def text_extract_skills(text):
 
     #lower
@@ -76,6 +77,12 @@ def text_extract_skills(text):
                 required_text.add(skills_db[a])
 
     return required_text
+
+def set_printer(set1):
+    for element in set1:
+        st.write(element,end=",")
+        
+
 def main(input_required_skills):
     #resume skills
     resume_skills=text_extract_skills(resume_text)
@@ -89,9 +96,12 @@ def main(input_required_skills):
     difference=job_skills-resume_skills
     if len(job_skills)!=0:
         percentage=(len(common)/len(job_skills))*100
+        st.header("MATCH")
         st.write("Resume is of ",percentage,"% match")
-        st.write("The useful found skills are ",common)
-        st.write("The missing skills are",difference)
+        st.header("USEFULL SKILLS")
+        st.write("The useful found skills are:-  ", ", ".join(common))
+        st.header("MISSING SKILLS")
+        st.write("The missing skills are:-   ", ", ".join(difference))
     else:
         print("error ")
 
@@ -99,9 +109,15 @@ def main(input_required_skills):
 
 if uploaded_file is not None:
     reader = PdfReader(uploaded_file)
-    page = reader.pages[0]
-    resume_text=page.extract_text()
-    input_required_skills=st.chat_input("Enter the job skills us want")
+    full_text = ""
+
+    for page in reader.pages:
+        text = page.extract_text()
+        if text:
+            full_text += text + "\n"
+    resume_text=full_text.strip()
+
+    input_required_skills=st.text_area("Enter the job skills us want")
     if input_required_skills is not None:
         main(input_required_skills)
 
